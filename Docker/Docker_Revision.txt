@@ -1,0 +1,376 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Deblocage au niveau de github:https://stackoverflow.com/questions/68775869/support-for-password-authentication-was-removed-please-use-a-personal-access-to
+
+Wordpress : https://redo-interactive.com/fr/installation-de-wordpress-et-docker-avec-votre-propre-domaine-local/
+
+Test perso : https://github.com/krishnaik06/Tomato-Leaf-Disease-Prediction
+https://hub.docker.com/repository/docker/tfofana/webapp
+https://github.com/tfofana/webapp
+
+lien contenu de la formation :https://docs.google.com/forms/d/1wOXQdEt7MJTiPdu4uY3XkChR2fGUQO1SOGxWJGNtwc4/viewform?edit_requested=true
+https://github.com/diranetafen/cursus-devops
+
+projet file rouge : https://github.com/sadofrazer/ic-webapp
+
+module 1 : 
+module 2 : https://eazytraining.fr/cours/kubernetes-les-bases-pour-devops/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INSTALLATION DE DOCKER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% This script is meant for quick & easy install via:
+#   $ curl -fsSL https://get.docker.com -o get-docker.sh
+#   $ sh get-docker.sh
+
+%% Il faut créer un utilisateur(Centos2) dans le groupe docker pour éviter de se connecter en "root"
+# usermod  -aG docker centos2
+
+%% Voir si le daemon de docker est lancé
+# docker ps
+
+%% Pour voir le status de docker
+# systemctl status docker
+
+%% Pour démarrer le service docker
+# systemctl start docker
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User: centos %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ su - centos
+$ docker ps
+$ groups
+centos adm wheel systemd-journal docker 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Commande pour permettre le démarrage automatique de docker %%%%%%%%%%%%%%%%%%%%%%%
+$ sudo systemctl enable docker
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Pour voir la version de docker installé %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$docker --version
+Docker version 20.10.11, build dea9396
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Lancement de notre premier daemon%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ docker run hello-world %% si le daemon docker arrive a bien lancé le conteneur
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% nginx %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ docker run --name nginx  -d -p 80:80 nginx 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Version installée %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ docker -v
+Docker version 20.10.12, build e91ed57
+$ docker --version
+Docker version 20.10.12, build e91ed57
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Voir si docker est lancé ou pas ?%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ systemctl status docker
+$ service docker status
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Télécharger une image tomcat %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker pull tomcat
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% lister les images docker installer %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker image ls
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Inspecter l'image tomcat %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker image inspect tomcat:latest
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Lancer tomcat:latest %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker run -d tomcat:latest
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Voir sur le conteneur tomcat est lancé %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker ps
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Se connecter directement dans le conteneur tomcat en bash %%%%%%%%%%%%%%%%%%%
+
+$ docker run -it tomcat bash
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Une fois dans le bash et on veut sortir%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Appuyer ctrl + pq
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Changer le nom d'un conteneur %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Exemple : "elated_gauss"
+$ docker rename elated_gauss fayalefeu
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Voir l'ensemble des conteneurs actifs ou non %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ docker ps -a
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%inspect un conteneur %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ docker container inspect 944
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Lancer 3 conteneurs Tomcat%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker run -d tomcat:latest
+$ docker run -d tomcat:latest
+$ docker run -d tomcat:latest
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Arrêter un conteneur %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker container stop <container ID> ou <NAMES>
+$ docker container stop 1eefc466479d
+$ docker container stop faya3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Demarrer des conteneurs simultanément %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker container start 1eefc466479d faya3
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Redemarrer un conteneur %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker container restart 1eefc466479d
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Kill un conteneur %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$ docker container kill 1eefc466479d
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Supprimer un conteneur %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NB : pour supprimer un conteneur il faut d'abord l'arrêté ou $docker container rm <CONTAINER ID> ou <NAMES>
+$ docker container stop 856
+$ docker container rm  856
+$ docker container rm  -f 1eefc466479d
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TEST avec une variable d'envirronement (-e ou --env)
+NB: 2 conteneurs doivent pas avoir les mêmes noms et mêmes ports de gauche.
+
+Exemple: https://github.com/kodekloudhub/webapp-color/blob/master/app.py
+
+$ docker run --name web-color -e APP_COLOR="red" -d -p 8080:8080 kodekloud/webapp-color 
+$ docker run --name web-color2 -e APP_COLOR="blue" -d -p 8081:8080 kodekloud/webapp-color
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Création de compte github & dockerhub %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+https://hub.docker.com/billing/plan/update
+LOGIN :tfofana
+**************************************************************************************************************************************
+https://github.com/
+login : tfofana or tidianefofana18@gmail.com
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TP-2 : [correction] récupération du code depuis le Dockerfile %%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ mkdir webapp
+$ cd webapp
+$ nano Dockerfile
+FROM ubuntu
+MAINTAINER tfofana (tidianefofana18@gmail.com)
+RUN apt-get update
+RUN apt-get install -y nginx
+EXPOSE 80
+ADD static-website-example/ /var/www/html/
+ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
+$ git clone https://github.com/diranetafen/static-website-example.git
+$ docker build -t webapp:v1 .
+
+***************************************** Vérifier si l'image a été buildé ***********************************************************
+$ docker images
+********************************************* Démarrer un container run **************************************************************
+$ docker run --name webapp -d -p 80:80 webapp:v1 
+
+********************NB : Puisque notre image fonctionne now, on va l'envoyer sur docker hub*******************************************
+$ docker login
+username : tfofana
+passwd :********
+*****************************Il faut pousser mon image vers mon compte docker hub*****************************************************
+$docker tag bd6670bbe7e2 tfofana/webapp:v1
+$docker push tfofana/webapp:v1 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FAIRE LE LIEN AVEC GITHUB %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+$ nano Dockerfile
+FROM ubuntu
+MAINTAINER tfofana (tidianefofana18@gmail.com)
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nginx git
+EXPOSE 80
+RUN rm -Rf /var/www/html/*
+RUN git clone https://github.com/diranetafen/static-website-example.git /var/www/html
+#ADD static-website-example/ /var/www/html/
+ENTRYPOINT ["/usr/sbin/nginx","-g","daemon off;"]
+
+$ docker build -t webapp:v2 .
+
+*********************************************** tester mon image************************************************************************
+$ docker run --name webapp2 -p 80:80 -d webapp:v2
+$rm -rf static-website-example
+
+*****************************Pousser le code *******************************************************************************************
+echo "# webapp" >> README.md
+git init
+git add README.md Dockerfile
+git config --global user.email "tidianefofana18@gmail.com"
+git config --global user.name "tfofana"
+git remote add origin https://github.com/tfofana/webapp.git
+git commit "first commit"
+git push -u origin master
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Module 04 : Gestion Des Réseaux GESTION DES RESEAUX %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+1- lister les réseaux sur docker
+$ docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+02403b058d2f        bridge              bridge              local
+fa054a9af353        host                host                local
+f50397115ef2        none                null                local
+
+2-Créer un réseau de type bridge qui a pour nom= sharenetwok et sous-rx= 192.168.20.0/24-----
+$ docker network create --driver=bridge --subnet=192.168.20.0/24 sharenetwok
+936f9a30d203d3b61302c0d6f5d4eefae74e5e1b54eedde3c9c4af8b03c45fd4
+
+$ docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+02403b058d2f        bridge              bridge              local
+fa054a9af353        host                host                local
+f50397115ef2        none                null                local
+936f9a30d203        sharenetwork        bridge              local
+
+3- Créér 2 conteneurs ubuntu10 & ubuntu20 utilisant le réseau sharenetwork et l'image ubuntu
+
+$ docker run -it --name ubuntu10 --network sharenetwork -d ubuntu /bin/bash
+6ddf7b3602b315fefb48ad0a3806f3abe8d3913eabc6b6b0f83a81a0ec94311f
+
+
+********************************************CREATION D'un réseau bridge*****************************************************************
+$ docker network create --driver=bridge --subnet=192.168.2.0/24 sharenetwork1
+$ docker network ls
+$docker ps
+$ docker images ls
+
+
+********************************Création d'un container ubuntu***************************************************************************
+$ docker run -it --name ubuntu1 --network sharenetwork1 -d ubuntu /bin/bash
+$ docker run -it --name ubuntu2 --network sharenetwork1 -d ubuntu /bin/bash
+
+*****Besoin d'information sur un container **********************************************************************************************
+$ inspect <nom du container>
+$ docker inspect ubuntu1
+
+********Se connecter à un de nos containers**********************************************************************************************
+$ docker exec -it ubuntu1 /bin/bash
+
+********************* Installer les paquets réseaux sur mon container********************************************************************
+
+# apt-get update && apt-get install iputils-ping
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Module 05 : Gestion Du Stockage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Répertoire  qui contient les volumes de type volume: /var/lib/dcoker/volumes 
+
+**********************************Création de Volume*************************************************************************************
+$ docker volume create --name share
+
+****************Je souhaite créer un container ubuntu1 avec un volume *******************************************************************
+$ docker run  -it --name ubuntu1 -v share:/tmp -d ubuntu /bin/bash
+
+****************Je souhaite créer un container ubuntu2 avec un volume *******************************************************************
+
+$ docker run  -it --name ubuntu2 -v share:/tmp -d ubuntu /bin/bash
+
+********Se connecter au container ubuntu1**********************************************************************************************
+$ docker exec -it ubuntu1 /bin/bash
+$touch /tmp/toto.txt
+# exit
+$ docker exec -it ubuntu2 /bin/bash
+# echo "eazytraining is the best center training" > /tmp/toto.txt
+exit
+$
+************************Par inadvertance je supprime ubuntu1*****************************************************************************
+$ docker rm -f ubuntu1
+**********************On me demande de remettre ubuntu1 que j'ai supprimé****************************************************************
+$ docker run -it --name ubuntu1-restore -v share:/tmp -d ubuntu /bin/bash
+$ docker exec -it ubuntu1-restore /bin/bash 
+
+
+******************************************************************************************************************************************
+ubuntu2@karpo:~$ git clone https://github.com/diranetafen/static-website-example.git
+Clonage dans 'static-website-example'...
+remote: Enumerating objects: 75, done.
+remote: Total 75 (delta 0), reused 0 (delta 0), pack-reused 75
+Dépaquetage des objets: 100% (75/75), 669.28 Kio | 511.00 Kio/s, fait.
+ubuntu2@karpo:~$ ls
+
+
+ubuntu2@karpo:~$ docker run --name webserver2 -p 8081:80 -d -v ${PWD}/static-website-example:/usr/local/apache2/htdocs/ httpd
+c10d0dd801f70500514e27fc5defb69d3f9da08a9d372c229e615ea7aafdb7d7
+ubuntu2@karpo:~$ docker ps
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS         PORTS                                   NAMES
+c10d0dd801f7   httpd         "httpd-foreground"       11 seconds ago   Up 7 seconds   0.0.0.0:8081->80/tcp, :::8081->80/tcp   webserver2
+936adc24b644   ubuntu        "/bin/bash"              2 hours ago      Up 2 hours                                             ubuntu1-restore
+bd4f7b89e9c4   ubuntu        "/bin/bash"              2 hours ago      Up 2 hours                                             ubuntu2
+3441a8a221f4   webappli:v1   "/usr/sbin/nginx -g …"   13 days ago      Up 4 hours     0.0.0.0:80->80/tcp, :::80->80/tcp       webappli
+225d09cd0873   nginx         "/docker-entrypoint.…"   2 weeks ago      Up 4 hours     0.0.0.0:8080->80/tcp, :::8080->80/tcp   serveur1
+ubuntu2@karpo:~$ 
+
+ubuntu2@karpo:~$ docker logs webserver2
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.6. Set the 'ServerName' directive globally to suppress this message
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.6. Set the 'ServerName' directive globally to suppress this message
+[Mon May 23 13:50:17.462962 2022] [mpm_event:notice] [pid 1:tid 140256444001600] AH00489: Apache/2.4.53 (Unix) configured -- resuming normal operations
+[Mon May 23 13:50:17.465486 2022] [core:notice] [pid 1:tid 140256444001600] AH00094: Command line: 'httpd -D FOREGROUND'
+ubuntu2@karpo:~$ 
+
+ubuntu2@karpo:~$ cd static-website-example/
+ubuntu2@karpo:~/static-website-example$ nano index.html 
+
+Remplacer Dimension par TIDIANE
+
+
+ubuntu2@karpo:~/static-website-example$ docker restart webserver2
+
+http://192.168.1.34:8081/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INSTALLATION DOCKER COMPOSE%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+root@Amel:~# su - tfofana
+tfofana@Amel:~$ DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+tfofana@Amel:~$ mkdir -p $DOCKER_CONFIG/cli-plugins
+tfofana@Amel:~$ curl -SL https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 25.2M  100 25.2M    0     0  6060k      0  0:00:04  0:00:04 --:--:-- 7369k
+tfofana@Amel:~$ chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+tfofana@Amel:~$ docker compose version
+Docker Compose version v2.5.0
+tfofana@Amel:~$ docker-compose -v
+docker-compose version 1.25.0, build unknown
+tfofana@Amel:~$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TP5 : INTRODUCTION A L'IaC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+--------------------------------------------Installation de Docker-compose sur ubuntu--------------------------------------------------------
+$ DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+$ mkdir -p $DOCKER_CONFIG/cli-plugins
+$ curl -SL https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+$ chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+$ docker-compose -v
+----------------------------------------------------------------------TP5--------------------------------------------------------------------
+$ nano docker-compose.yml
+version: '3.1'
+services:
+  web:
+    image: odoo:14.0
+    depends_on:
+      - db
+    ports:
+      - "80:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+    networks:
+      - odoo_network
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgresql_password
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+    networks:
+      - odoo_network
+volumes:
+  odoo-web-data:
+  odoo-db-data:
+
+networks:
+  odoo_network:
+
+$ docker-compose up -d
+
+
+
